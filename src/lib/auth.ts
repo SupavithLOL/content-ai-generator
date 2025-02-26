@@ -4,6 +4,9 @@ import GoogleProvider from "next-auth/providers/google";
 import {PrismaAdapter} from "@next-auth/prisma-adapter";
 import {db} from "./db";
 import { compare } from "bcrypt";
+import { generateVerificationToken } from "./token";
+import { getUserByEmail, getUserById } from "@/data/user";
+import { sendVerificationEmail } from "./mail";
 
 export const authOptions: NextAuthOptions ={
     adapter: PrismaAdapter(db),
@@ -29,12 +32,21 @@ export const authOptions: NextAuthOptions ={
             if(!credentials?.email || !credentials?.password){
                 return null;
             }
-            const existingUser = await db.user.findUnique({
-                where: {email: credentials?.email}
-            });
+            const existingUser = await getUserByEmail(credentials.email);
 
-            if(!existingUser){
+            if(!existingUser || !existingUser.email){
                 return null;
+            }
+
+            if(!existingUser.emailVerified){
+              const verificationToken = await generateVerificationToken(
+                existingUser.email,
+              );
+
+              //send email verification
+              await sendVerificationEmail(verificationToken.email, verificationToken.token);
+
+              return Promise.reject(new Error("EmailNotVerified"));
             }
 
             const passwordMatch = await compare(credentials.password, existingUser.password);
@@ -51,24 +63,31 @@ export const authOptions: NextAuthOptions ={
         })
     ],
     callbacks: {
-        async jwt({ token, user }) {
-            if(user){
-                return {
-                    ...token,
-                    username: user.username
-                }
-            }
-            return token;
-          },
-          async session({ session, token }) {
-            return {
-                ...session,
-                user:{
-                    ...session.user,
-                    username: token.username
-                }
-            }
-            return session;
-          },
+      async signIn({user, account}) {
+        console.log(account);
+        //callback ถ้า user ยังไม่ verified จะไม่สามารถเข้าไปได้
+        const existingUser = await getUserById(user.id);
+        if(!existingUser?.emailVerified) return false;
+        return true;
+      },
+      async jwt({ token, user }) {
+          if(user){
+              return {
+                  ...token,
+                  username: user.username
+              }
+          }
+        return token;
+      },
+      async session({ session, token }) {
+        return {
+            ...session,
+            user:{
+                ...session.user,
+                username: token.username
+           }
+        }
+        return session;
+      },
     }
 }

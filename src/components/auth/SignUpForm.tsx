@@ -3,8 +3,6 @@
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 import {
   Form,
@@ -16,10 +14,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ToastContainer, toast, Slide } from "react-toastify";
+import { ToastContainer, toast, Slide, Bounce } from "react-toastify";
 import CardWrapper from "./CardWrapper";
 
-const formSchema = z
+const SignUpSchema = z
   .object({
     username: z.string().min(1, "Username is required").max(100),
     email: z.string().min(1, "Email is required").email("Invalid email"),
@@ -32,9 +30,8 @@ const formSchema = z
   });
 
 const SignUpForm = () => {
-  const router = useRouter();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof SignUpSchema>>({
+    resolver: zodResolver(SignUpSchema),
     defaultValues: {
       username: "",
       email: "",
@@ -43,9 +40,9 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof SignUpSchema>) => {
     try {
-      const response = await fetch("/api/user", {
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +57,17 @@ const SignUpForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        router.push("/sign-in");
+        toast.success(data.message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       } else {
         // console.error("Registration failed");
         toast.error(data.message, {

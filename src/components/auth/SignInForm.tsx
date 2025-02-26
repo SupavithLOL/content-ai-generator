@@ -13,17 +13,16 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import CardWrapper from "./CardWrapper";
+import Link from "next/link";
 
 /**
  * Schema validation สำหรับฟอร์ม Sign In ด้วย Zod
  */
-const FormSchema = z.object({
+const SignInSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email"),
   password: z
     .string()
@@ -37,8 +36,8 @@ const FormSchema = z.object({
  */
 const SignInForm = () => {
   const router = useRouter();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof SignInSchema>>({
+    resolver: zodResolver(SignInSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -49,29 +48,60 @@ const SignInForm = () => {
    * ฟังก์ชัน handleSubmit สำหรับฟอร์ม Sign In
    * @param {z.infer<typeof FormSchema>} values - ค่าจากฟอร์ม
    */
-  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+
+  const onSubmit = async (values: z.infer<typeof SignInSchema>) => {
     const signInData = await signIn("credentials", {
       email: values.email,
       password: values.password,
       redirect: false,
     });
-    console.log("signInData:", signInData);
+
+    console.log("signInData:", signInData); // Debug ดูค่า signInData
+
     if (signInData?.error) {
-      toast.error("Wrong Email or Password", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Slide,
-      });
-    } else {
-      router.push("/dashboard/admin");
-      router.refresh();
+      let errorMessage = "Wrong Email or Password";
+      let errorType = "GenericError";
+
+      if (signInData?.error) {
+        errorType = signInData.error as string;
+      }
+
+      if (errorType === "EmailNotVerified") {
+        errorMessage =
+          "Email not verified. Please check your inbox to verify your email.";
+        toast.warn(errorMessage, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        });
+      } else {
+        toast.error(errorMessage, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        });
+      }
+
+      return; // **สำคัญ! ป้องกันการ redirect ถ้า login ไม่ผ่าน**
     }
+
+    console.log(
+      "SignInForm: Sign in successful - Redirecting to admin dashboard..."
+    );
+    router.push("/dashboard/admin");
+    router.refresh();
   };
 
   return (
@@ -110,6 +140,14 @@ const SignInForm = () => {
                       {...field}
                     />
                   </FormControl>
+                  <Button
+                    size="sm"
+                    variant="link"
+                    asChild
+                    className="px-0 font-normal text-blue-500 hover:underline"
+                  >
+                    <Link href="/reset-password">Forgot Password</Link>
+                  </Button>
                   <FormMessage />
                 </FormItem>
               )}
