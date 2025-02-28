@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id                       String    @id @default(cuid())
   email                    String    @unique
@@ -18,6 +23,18 @@ model User {
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
   credit                   Int       @default(10)
+  role                     Role      @default(USER)
+
+  creditHistory CreditHistory[]
+}
+
+model CreditHistory {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  amount    Int // จำนวนเครดิตที่เพิ่มหรือลด
+  type      String // ประเภท เช่น "add", "spend", "refund"
+  createdAt DateTime @default(now())
 }
 
 model VerificationToken {

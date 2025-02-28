@@ -75,7 +75,8 @@ export async function POST(req: Request) {
                 password: hashedPassword,
                 emailVerified: null,
                 verificationToken: verificationToken.token,
-                verificationTokenExpires: new Date(Date.now() + 60 * 60 * 1000) // Expire in 1 hrs
+                verificationTokenExpires: new Date(Date.now() + 60 * 60 * 1000), // Expire in 1 hrs
+                role: "USER",
             }
         });
 
