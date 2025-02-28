@@ -100,7 +100,7 @@ const SignInForm = () => {
     console.log(
       "SignInForm: Sign in successful - Redirecting to admin dashboard..."
     );
-    router.push("/dashboard/admin");
+    router.push("/user/profile");
     router.refresh();
   };
 
