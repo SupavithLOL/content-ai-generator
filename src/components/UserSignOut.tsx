@@ -4,7 +4,7 @@ import { signOut } from "next-auth/react";
 
 interface UserSignOutProps {
   user: {
-    name?: string | null;
+    username?: string | null;
     email?: string | null;
   };
 }
@@ -12,7 +12,7 @@ interface UserSignOutProps {
 const UserSignOut: React.FC<UserSignOutProps> = ({ user }) => {
   return (
     <div className="flex items-center gap-4">
-      <span className="text-gray-700">{user.name || user.email}</span>
+      <span className="text-gray-700">{user.username || user.email}</span>
       <button
         onClick={() =>
           signOut({
