@@ -8,7 +8,13 @@ interface UserInfoProps {
     id: string;
     username: string;
     email: string;
-    role: "USER" | "ADMIN";
+    subscription: {
+      planId: string;
+      planName: string;
+      status: string;
+      startDate: string;
+      endDate: string;
+    };
   };
 }
 
@@ -32,8 +38,12 @@ const UserInfo = ({ user }: UserInfoProps) => {
         <p className="text-gray-900">{user.email}</p>
       </div>
       <div className="mb-4">
-        <p className="font-semibold text-gray-700">Role</p>
-        <p className="text-gray-900">{user.role}</p>
+        <p className="font-semibold text-gray-700">Subscription</p>
+        {user.subscription?.planName ? (
+          <p className="text-gray-900">{user.subscription?.planName}</p>
+        ) : (
+          <p className="text-gray-900">No Subscription</p>
+        )}
       </div>
       <div className="mt-6 flex space-x-2">
         <button className="flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">

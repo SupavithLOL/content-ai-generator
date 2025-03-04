@@ -3,7 +3,7 @@ import CardWrapper from "@/components/auth/CardWrapper";
 import { BeatLoader } from "react-spinners";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { ToastContainer, toast, Slide, Bounce } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 const NewVerificationForm = () => {
   const [status, setStatus] = useState<

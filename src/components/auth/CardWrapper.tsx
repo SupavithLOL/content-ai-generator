@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Header from "./Header";
-import Social from "./Social";
+// import Social from "./Social";
 import BackButton from "./BackButton";
 
 interface CardWrapperProps {
@@ -23,8 +23,8 @@ const CardWrapper = ({
   headerLabel,
   backButtonLabel,
   backButtonHref,
-  showSocial,
-}: CardWrapperProps) => {
+}: // showSocial,
+CardWrapperProps) => {
   return (
     <div className="flex items-center justify-center">
       <Card className="w-[400px] shadow-md ">

@@ -12,14 +12,20 @@ const UserProfilePage = async () => {
   }
 
   return (
-    <div>
+    <div className="w-full p-6 md:p-10 jutify-center item-center">
       <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
-      <div className="flex flex-col-2 justify-center item-center">
-        <UserInfo user={session.user} />
-        <Credits />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="col-span-1">
+          <UserInfo user={session.user} />
+        </div>
+        <div className="col-span-1">
+          <Credits />
+        </div>
       </div>
 
-      <CreditHistory />
+      <div className="mb-8">
+        <CreditHistory />
+      </div>
     </div>
   );
 };

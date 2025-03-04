@@ -35,6 +35,26 @@ const SignInSchema = z.object({
  * @returns {JSX.Element} SignInForm component
  */
 const SignInForm = () => {
+  // const router = useRouter();
+  // const searchParams = useSearchParams(); // รับ access ไปยัง URL query parameters
+
+  // const handleSignInSuccess = () => { // หรือที่ใดก็ตามที่คุณจัดการการ sign-in สำเร็จ
+  //   const redirectToPayment = searchParams.get('redirectToPayment'); // ตรวจสอบ query parameter
+  //   const selectedPlanJSON = sessionStorage.getItem('selectedPlan'); // ดึงแผนจาก sessionStorage
+
+  //   if (redirectToPayment && selectedPlanJSON) {
+  //     const selectedPlan = JSON.parse(selectedPlanJSON); // Parse plan object
+  //     sessionStorage.removeItem('selectedPlan'); // ล้างออกจาก sessionStorage หลังใช้งาน
+
+  //     // สร้าง URL การชำระเงิน - คุณอาจต้องปรับเปลี่ยนตาม logic การชำระเงินของคุณ
+  //     const paymentUrl = `/payment?planName=${selectedPlan.name}&planPrice=${selectedPlan.price}`; // ตัวอย่าง
+
+  //     router.push(paymentUrl); // Redirect ไปหน้าชำระเงินพร้อมข้อมูลแผน
+  //   } else {
+  //     // หากไม่ได้ redirect ไปชำระเงิน ให้ redirect ไป dashboard หรือหน้า home
+  //     router.push('/dashboard'); // หรือที่ใดก็ตามที่คุณต้องการ redirect หลัง sign-in ทั่วไป
+  //   }
+  // };
   const router = useRouter();
   const form = useForm<z.infer<typeof SignInSchema>>({
     resolver: zodResolver(SignInSchema),

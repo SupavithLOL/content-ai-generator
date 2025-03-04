@@ -35,13 +35,22 @@ const CreditHistory = () => {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
                       })}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-red-500 font-semibold">
-                      {item.amount} Credits
-                    </p>
+                    {item.amount < 0 ? (
+                      <p className="text-red-500 font-semibold">
+                        {item.amount} Credits
+                      </p>
+                    ) : (
+                      <p className="text-green-500 font-semibold">
+                        +{item.amount} Credits
+                      </p>
+                    )}
                   </div>
                 </div>
               </li>

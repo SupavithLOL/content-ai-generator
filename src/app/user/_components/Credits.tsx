@@ -1,9 +1,14 @@
 "use client";
+import { useState } from "react";
+import AddCredit from "./AddCredit";
 import GenerateButton from "./GenerateButton";
 import { useCredit } from "@/hooks/credit";
 
 const Credits = () => {
   const { credit } = useCredit();
+
+  const [creditAmout, setCreditAmount] = useState(0);
+  const [type, setType] = useState("");
 
   return (
     <div className="w-full p-6 bg-white rounded-lg shadow">
@@ -29,7 +34,22 @@ const Credits = () => {
         <p>Loading...</p>
       )}
 
-      <GenerateButton amount={10} type={"Use 10 Credit"} />
+      {/* <input
+        type="number"
+        placeholder="Enter credit amount"
+        value={creditAmout}
+        className="p-4 mt-4 w-full border border-gray-300 rounded-lg text-black font-semibold"
+        onChange={(e) => setCreditAmount(Number(e.target.value) || 0)}
+      />
+      <input
+        placeholder="Description"
+        value={type}
+        onChange={(e) => setType(e.target.value)}
+        className="p-4 mt-4 w-full border border-gray-300 rounded-lg text-black font-semibold"
+      ></input>
+
+      <GenerateButton amount={creditAmout} type={type} />
+      <AddCredit amount={creditAmout} type={type} /> */}
     </div>
   );
 };

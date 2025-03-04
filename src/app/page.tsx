@@ -1,6 +1,9 @@
+import Pricing from "@/components/Pricing";
+
 const Home = () => (
   <main>
-    <div>Hellow</div>
+    <div>Home Page</div>
+    <Pricing />
   </main>
 );
 

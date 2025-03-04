@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import {
   Form,
@@ -16,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ToastContainer, toast, Slide, Bounce } from "react-toastify";
 import CardWrapper from "./CardWrapper";
+import { useState } from "react";
+import TermsModal from "./TermsModal";
 
 const SignUpSchema = z
   .object({
@@ -23,6 +26,9 @@ const SignUpSchema = z
     email: z.string().min(1, "Email is required").email("Invalid email"),
     password: z.string().min(8, "Password must have at least 8 characters"),
     confirmPassword: z.string().min(8, "Password confirmation is required"),
+    acceptTerms: z.literal(true, {
+      errorMap: () => ({ message: "You must accept the Terms of Service" }),
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
@@ -37,10 +43,36 @@ const SignUpForm = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      acceptTerms: false,
     },
   });
 
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+  const verifyCaptcha = async () => {
+    if (!captchaToken) {
+      toast.error("Please complete the reCAPTCHA.");
+      return false;
+    }
+
+    const res = await fetch("/api/captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: captchaToken }),
+    });
+
+    const data = await res.json();
+    if (!data.success) {
+      toast.error("Captcha verification failed.");
+      return false;
+    }
+
+    return true;
+  };
+
   const onSubmit = async (values: z.infer<typeof SignUpSchema>) => {
+    if (!(await verifyCaptcha())) return;
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
@@ -173,6 +205,46 @@ const SignUpForm = () => {
               </FormItem>
             )}
           />
+          {/* <div className="flex flex-row justify-center items-center space-x-2">
+            <input
+              type="checkbox"
+              id="acceptTerms"
+              className="w-4 h-4"
+              checked={acceptTerms}
+              onChange={(e) => setAcceptTerms(e.target.checked)}
+            />
+            <label htmlFor="acceptTerms" className="select-none">
+              I agree to the <TermsModal />
+            </label>
+          </div> */}
+
+          <FormField
+            control={form.control}
+            name="acceptTerms"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center space-x-2">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      id="acceptTerms"
+                      className="w-4 h-4"
+                      checked={field.value ?? false} // ป้องกัน undefined
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    />
+                  </FormControl>
+                  <label htmlFor="acceptTerms" className="select-none text-sm">
+                    I agree to the <TermsModal />
+                  </label>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex justify-center">
+            <ReCAPTCHA sitekey={siteKey!} onChange={setCaptchaToken} />
+          </div>
 
           <Button type="submit" className="w-full mt-4">
             Sign Up

@@ -12,6 +12,26 @@ enum Role {
   ADMIN
 }
 
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED // Optional: if you handle refunds
+}
+
+enum CreditTransactionType {
+  EARNED // ได้รับเครดิต (เช่น จากโปรโมชั่น หรือกิจกรรม)
+  SPENT // ใช้เครดิต (เช่น ซื้อสินค้า บริการ)
+  REFUND // คืนเครดิต (เช่น ยกเลิกรายการ)
+  ADJUSTMENT // ปรับยอดเครดิต (เช่น แอดมินปรับแก้ไข)
+}
+
 model User {
   id                       String    @id @default(cuid())
   email                    String    @unique
@@ -26,15 +46,55 @@ model User {
   role                     Role      @default(USER)
 
   creditHistory CreditHistory[]
+  subscriptions Subscription[]
+  Payment       Payment[]
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  price       Float
+  creditLimit Int?
+  createdAt   DateTime @default(now())
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  plan      Plan               @relation(fields: [planId], references: [id])
+  status    SubscriptionStatus @default(ACTIVE) // active, canceled, expired
+  startDate DateTime           @default(now())
+  endDate   DateTime?
+  planId    String
+  Payment   Payment[]
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  amount    Float
+  currency  String        @default("USD")
+  status    PaymentStatus @default(COMPLETED) // pending, completed, failed
+  createdAt DateTime      @default(now())
+  method    String
+  provider  String
+
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
 }
 
 model CreditHistory {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String                @id @default(cuid())
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  amount    Int // จำนวนเครดิตที่เพิ่มหรือลด
-  type      String // ประเภท เช่น "add", "spend", "refund"
-  createdAt DateTime @default(now())
+  amount    Int
+  type      CreditTransactionType
+  createdAt DateTime              @default(now())
 }
 
 model VerificationToken {

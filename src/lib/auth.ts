@@ -54,13 +54,32 @@ export const authOptions: NextAuthOptions ={
                 return null;
             }
 
+            const activeSubscription = await db.subscription.findFirst({
+              where: {
+                userId: existingUser.id,
+                status: "ACTIVE",
+              },
+              include: {
+                plan: true,
+              },
+            });
+
             return {
                 id: `${existingUser.id}`,
                 username: existingUser.username,
                 email: existingUser.email,
                 role: existingUser.role,
-            }
-          }
+                subscription: activeSubscription
+                  ? {
+                      planId: activeSubscription.planId,
+                      planName: activeSubscription.plan.name,
+                      status: activeSubscription.status,
+                      startDate: activeSubscription.startDate,
+                      endDate: activeSubscription.endDate,
+                    }
+                  : null,
+            };
+          },
         })
     ],
     callbacks: {
@@ -78,7 +97,8 @@ export const authOptions: NextAuthOptions ={
                   id: user.id,
                   username: user.username,
                   email: user.email,
-                  role: user.role, 
+                  role: user.role,
+                  subscription: user.subscription || null 
               }
           }
         return token;
@@ -92,6 +112,7 @@ export const authOptions: NextAuthOptions ={
                 username: token.username,
                 email: token.email,
                 role: token.role,
+                subscription: token.subscription,
            }
         }
       },
