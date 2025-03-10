@@ -15,6 +15,10 @@ export async function POST(req: NextRequest) {
     const user = await getUserByEmail(session.user.email);
     const userId = user?.id;
 
+    if (!userId) {
+      return NextResponse.json({ error: "User ID not found" }, { status: 404 }); 
+    }
+
     if (!amount || amount <= 0) {
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
     }
