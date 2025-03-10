@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getVerificationTokenByToken } from "@/data/verification-token";
 import { getUserByEmail } from "@/data/user";
 
-export const newVerification = async (token: string) => {
+const newVerification = async (token: string) => {
     const existingToken = await getVerificationTokenByToken(token);
 
     if (!existingToken) {
