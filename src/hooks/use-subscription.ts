@@ -9,8 +9,8 @@ interface Subscription {
   id: string;
   stripeSubscriptionId: string;
   status: string;
-  startDate: Date;
-  endDate: Date;     
+  startDate: string;
+  endDate: string;     
 }
 
 interface SubscriptionResponse {

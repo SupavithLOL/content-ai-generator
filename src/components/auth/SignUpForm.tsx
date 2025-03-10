@@ -26,8 +26,8 @@ const SignUpSchema = z
     email: z.string().min(1, "Email is required").email("Invalid email"),
     password: z.string().min(8, "Password must have at least 8 characters"),
     confirmPassword: z.string().min(8, "Password confirmation is required"),
-    acceptTerms: z.literal(true, {
-      errorMap: () => ({ message: "You must accept the Terms of Service" }),
+    acceptTerms: z.boolean().refine((value) => value === true, {
+      message: "You must accept the Terms of Service",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {

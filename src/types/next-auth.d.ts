@@ -6,15 +6,7 @@ declare module "next-auth" {
     email: string;
     username: string;
     role: string;
-    credit: number;
-    createdAt: Date;
-    subscription?: {
-      planId: string;
-      planName: string;
-      status: string;
-      startDate: Date;
-      endDate?: Date;
-    } | null;
+    createdAt: string;
   }
 
   interface Session extends DefaultSession {
@@ -25,14 +17,6 @@ declare module "next-auth" {
     id: string;
     username: string;
     role: string;
-    credit: number;
-    createdAt: Date;
-    subscription?: {
-      planId: string;
-      planName: string;
-      status: string;
-      startDate: Date;
-      endDate?: Date;
-    } | null;
+    createdAt: string;
   }
 }

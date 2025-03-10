@@ -4,7 +4,11 @@ import { useSubscription } from "@/hooks/use-subscription";
 const SubscriptionDetail = () => {
   const { subscription } = useSubscription();
   const { plan } = usePlan();
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: Date | string | undefined) => {
+    if (!dateString) {
+      return "N/A";
+    }
+
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return "N/A";

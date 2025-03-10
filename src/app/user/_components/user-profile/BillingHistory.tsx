@@ -4,7 +4,7 @@ const BillingHistoryTable = () => {
   const { billingHistory, isLoading, error } = useBillingHistory();
 
   // src/lib/utils.js หรือไฟล์ utility อื่นๆ
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return "N/A";

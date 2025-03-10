@@ -2,6 +2,13 @@
 
 import { useCreditHistory } from "@/hooks/credit-history";
 
+interface CreditHistoryItem {
+  id: string;
+  type: string;
+  createdAt: string;
+  amount: number;
+}
+
 const CreditHistory = () => {
   const { history, isLoading } = useCreditHistory(); // รับ isLoading มาด้วย
 
@@ -27,7 +34,7 @@ const CreditHistory = () => {
       <div className="overflow-y-auto">
         <ul>
           {history.length > 0 ? (
-            history.map((item) => (
+            history.map((item: CreditHistoryItem) => (
               <li key={item.id} className="border-b border-gray-200 pb-4">
                 <div className="flex justify-between items-start">
                   <div>

@@ -1,6 +1,5 @@
 import {NextAuthOptions} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import {db} from "./db";
 import { compare } from "bcrypt";
 import { generateVerificationToken } from "./token";
 import { getUserByEmail, getUserById } from "@/data/user";
@@ -12,7 +11,7 @@ export const authOptions: NextAuthOptions ={
         strategy: "jwt"
     },
     pages:{
-        signIn: "/auth/sign-in",
+        signIn: "/sign-in",
       },
     providers: [
         CredentialsProvider({
@@ -48,36 +47,14 @@ export const authOptions: NextAuthOptions ={
                 return null;
             }
 
-            const activeSubscription = await db.subscription.findFirst({
-              where: {
-                userId: existingUser.id,
-                status: "ACTIVE",
-              },
-              include: {
-                plan: true,
-              },
-            });
-
             await new Promise(resolve => setTimeout(resolve, 100));
 
             return {
                 id: `${existingUser.id}`,
                 username: existingUser.username,
                 email: existingUser.email,
-                createdAt: existingUser.createdAt,
+                createdAt: existingUser.createdAt.toISOString(),
                 role: existingUser.role,
-                subscription: activeSubscription
-                  ? {
-                      stripeSubscriptionId: activeSubscription.stripeSubscriptionId,
-                      planId: activeSubscription.planId,
-                      planName: activeSubscription.plan.name,
-                      status: activeSubscription.status,
-                      startDate: activeSubscription.startDate,
-                      endDate: activeSubscription.endDate,
-                      currentPeriodEnd: activeSubscription.currentPeriodEnd, 
-                      cancelAtPeriodEnd: activeSubscription.cancelAtPeriodEnd
-                    }
-                  : null,
             };
           },
         })
@@ -90,15 +67,7 @@ export const authOptions: NextAuthOptions ={
       },
       async jwt({ token, user }) {
           if(user){
-            const activeSubscription = await db.subscription.findFirst({
-              where: {
-                userId: user.id,
-                status: "ACTIVE",
-              },
-              include: {
-                plan: true,
-              },
-            });
+           
               return {
                   ...token,
                   id: user.id,
@@ -106,18 +75,6 @@ export const authOptions: NextAuthOptions ={
                   email: user.email,
                   createdAt: user.createdAt,
                   role: user.role,
-                  subscription: activeSubscription 
-                  ? {
-                      stripeSubscriptionId: activeSubscription.stripeSubscriptionId,
-                      planId: activeSubscription.planId,
-                      planName: activeSubscription.plan.name,
-                      status: activeSubscription.status,
-                      startDate: activeSubscription.startDate,
-                      endDate: activeSubscription.endDate,
-                      currentPeriodEnd: activeSubscription.currentPeriodEnd,
-                      cancelAtPeriodEnd: activeSubscription.cancelAtPeriodEnd, 
-                    }
-                  : null,
               }
           }
         return token;
@@ -133,7 +90,6 @@ export const authOptions: NextAuthOptions ={
                 email: token.email,
                 createdAt: token.createdAt,
                 role: token.role,
-                subscription: token.subscription || null,
            }
         }
       },

@@ -5,7 +5,11 @@ import { useSession } from "next-auth/react";
 const PersonalInfo = ({}) => {
   const { data: session } = useSession();
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: Date | string | undefined) => {
+    if (!dateString) {
+      return "N/A";
+    }
+
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return "N/A";

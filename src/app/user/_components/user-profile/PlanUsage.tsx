@@ -18,7 +18,11 @@ const PlanUsage = () => {
     return feature?.limitValue; // Return limitValue if found, undefined otherwise
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: Date | string | undefined) => {
+    if (!dateString) {
+      return "N/A";
+    }
+
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return "N/A";

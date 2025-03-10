@@ -137,7 +137,7 @@ const Pricing = () => {
         }
       } catch (error) {
         console.error("Fetch error:", error);
-        alert(`Network error: ${error.message}`);
+        alert("Network error");
       }
     }
   };
