@@ -36,11 +36,10 @@ const TermsModal = () => {
             <div className="space-y-4 text-sm text-gray-700">
               <h2 className="text-lg font-semibold">1. Acceptance of Terms</h2>
               <p>
-                By accessing or using the Content Generator service ("Service"),
-                provided by [Your Company Name] ("we", "us", or "our"), you
-                agree to be bound by these Terms of Service ("Terms"). If you
-                disagree with any part of the terms, then you may not access the
-                Service.
+                By accessing or using the Content Generator service (Service),
+                provided by [Your Company Name] (we, us, or our), you agree to
+                be bound by these Terms of Service (Terms). If you disagree with
+                any part of the terms, then you may not access the Service.
               </p>
 
               <h2 className="text-lg font-semibold">2. Account Registration</h2>
@@ -94,7 +93,7 @@ const TermsModal = () => {
                 <li>
                   Generating or distributing content that is unlawful, harmful,
                   threatening, abusive, harassing, tortious, defamatory, vulgar,
-                  obscene, libelous, invasive of another's privacy, hateful, or
+                  obscene, libelous, invasive of another privacy, hateful, or
                   racially, ethnically, or otherwise objectionable.
                 </li>
                 <li>
@@ -128,7 +127,7 @@ const TermsModal = () => {
                 6. Disclaimer of Warranties
               </h2>
               <p>
-                THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS.
+                THE SERVICE IS PROVIDED ON AN AS IS AND AS AVAILABLE BASIS.
                 [YOUR COMPANY NAME] MAKES NO WARRANTIES, EXPRESSED OR IMPLIED,
                 AND HEREBY DISCLAIMS AND NEGATES ALL OTHER WARRANTIES, INCLUDING
                 WITHOUT LIMITATION, IMPLIED WARRANTIES OR CONDITIONS OF
@@ -165,10 +164,10 @@ const TermsModal = () => {
                 You agree to indemnify, defend and hold harmless [Your Company
                 Name], its officers, directors, employees, agents and third
                 parties, for any losses, costs, liabilities and expenses
-                (including reasonable attorneys' fees) relating to or arising
-                out of your use of or inability to use the Service, your
-                violation of these Terms, or your violation of any rights of a
-                third party, or your violation of any applicable laws, rules or
+                (including reasonable attorneys fees) relating to or arising out
+                of your use of or inability to use the Service, your violation
+                of these Terms, or your violation of any rights of a third
+                party, or your violation of any applicable laws, rules or
                 regulations.
               </p>
 
@@ -183,7 +182,7 @@ const TermsModal = () => {
               <p>
                 We reserve the right, at our sole discretion, to modify or
                 replace these Terms at any time. If a revision is material, we
-                will try to provide at least 30 days' notice prior to any new
+                will try to provide at least 30 days notice prior to any new
                 terms taking effect. What constitutes a material change will be
                 determined at our sole discretion. By continuing to access or
                 use our Service after those revisions become effective, you
@@ -204,7 +203,7 @@ const TermsModal = () => {
               </p>
 
               <p className="mt-4">
-                By clicking "Sign Up" or using our Service, you acknowledge that
+                By clicking Sign Up or using our Service, you acknowledge that
                 you have read, understood, and agree to be bound by these Terms
                 of Service.
               </p>

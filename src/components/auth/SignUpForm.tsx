@@ -89,17 +89,20 @@ const SignUpForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success(data.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        toast.success(
+          "Email verification has been sent to the email " + data.user.email,
+          {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          }
+        );
       } else {
         // console.error("Registration failed");
         toast.error(data.message, {

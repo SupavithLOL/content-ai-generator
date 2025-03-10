@@ -81,7 +81,7 @@ export async function POST(req: Request) {
         });
 
         await sendVerificationEmail(verificationToken.email, verificationToken.token);
-        return NextResponse.json({ message: "Verification email has been sent" }, { status: 201 });
+        return NextResponse.json({ message: "Verification email has been sent", user: newUser }, { status: 201 });
 
     } catch (error) {
         console.error("Error creating user:", error);

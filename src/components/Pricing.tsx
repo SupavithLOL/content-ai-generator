@@ -146,12 +146,12 @@ const Pricing = () => {
     <div className="w-full max-w-6xl mx-auto px-4 py-12">
       <div className="text-center mb-10">
         <h2 className="text-4xl font-bold mb-4">
-          Choose a plan that's right for you.
+          Choose a plan thats right for you.
         </h2>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
           Get transparent pricing with no hidden fees—what you see is what you
-          pay. Whether you're just getting started or need advanced features,
-          our plans are designed to fit your needs and budget.
+          pay. Whether youre just getting started or need advanced features, our
+          plans are designed to fit your needs and budget.
         </p>
       </div>
 

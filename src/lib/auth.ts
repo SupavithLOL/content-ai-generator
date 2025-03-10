@@ -83,15 +83,12 @@ export const authOptions: NextAuthOptions ={
         })
     ],
     callbacks: {
-      async signIn({user, account}) {
-        // console.log(user);
-        //callback ถ้า user ยังไม่ verified จะไม่สามารถเข้าไปได้
+      async signIn({user}) {
         const existingUser = await getUserById(user.id);
         if(!existingUser?.emailVerified) return false;
         return true;
       },
       async jwt({ token, user }) {
-        // console.log("User Object in JWT Callback:", user);
           if(user){
             const activeSubscription = await db.subscription.findFirst({
               where: {

@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Not enough credits" }, { status: 400 });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, newCreditHistoryEntry] = await db.$transaction([
       db.user.update({
         where: { id: userId },

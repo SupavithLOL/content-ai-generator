@@ -54,8 +54,7 @@ export async function POST(req: NextRequest) {
 
     await markEventProcessed(eventId); // Mark event as processed after successful handling
     return new NextResponse("Success", { status: 200 });
-  } catch (err: any) {
-    console.error("Webhook processing error:", err.message);
+  } catch {
     return new NextResponse("Webhook processing error", { status: 500 });
   }
 }
