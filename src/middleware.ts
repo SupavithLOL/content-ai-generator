@@ -8,6 +8,10 @@ export async function middleware(req: NextRequest) {
     // const token = req.cookies.get("next-auth.session-token")?.value;
     const token = await getToken({ req });
 
+    // if (req.nextUrl.pathname.startsWith("/admin") && token?.role !== "ADMIN") {
+    //   return NextResponse.redirect(new URL("/unauthorized", req.url));
+    // }
+
     //เช็คว่าเมื่อเข้าอะไรก็ตามใน path /dashboard จะต้องมี token ถึงจะเข้าได้ 
     if (protectedRoutes.some((path) => req.nextUrl.pathname.startsWith(path)) && !token) {
         return NextResponse.redirect(new URL("/sign-in", req.url));
@@ -18,5 +22,5 @@ export async function middleware(req: NextRequest) {
 );}
 
 export const config = {
-    matcher: "/:path*",
+    matcher: ["/dashboard/:path*", "/admin/:path*", "/pro-features/:path*"],
   };

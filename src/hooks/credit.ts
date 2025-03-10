@@ -7,10 +7,16 @@ const fetcher = async (url: string) => {
 };
 
 export const useCredit = () => {
-  const { data } = useSWR("/api/credit", fetcher);
+  const { data, error, isLoading } = useSWR("/api/credit", fetcher,{
+    revalidateOnFocus: true,
+    revalidateIfStale: false,
+    revalidateInterval: 30000, 
+  });
 
   return {
     credit: data?.credit || 0,
+    isLoading,
+    error,
     refreshCredit: () => mutate("/api/credit"),
   };
 };

@@ -13,13 +13,6 @@ export async function GET() {
       }
   
       const userId = session.user.id;
-  
-      // const creditHistory = await db.creditHistory.findMany({
-      //   where: { userId },
-      //   orderBy: { createdAt: "desc" },
-      //   include: { user: { select: { username: true, email: true } } },
-      // });
-
       const creditHistory = await db.creditHistory.findMany({
         where: { userId },
         orderBy: { createdAt: "desc" },

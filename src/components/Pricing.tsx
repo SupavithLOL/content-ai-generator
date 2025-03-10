@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 interface PricingFeature {
   text: string;
@@ -23,7 +24,7 @@ interface PricingPlan {
   description: string;
   features: PricingFeature[];
   popular?: boolean;
-  paymentLink?: string;
+  priceId?: string;
 }
 
 const Pricing = () => {
@@ -45,7 +46,7 @@ const Pricing = () => {
         { text: "Share with up to 3 users" },
         { text: "10 competitor analyses" },
       ],
-      paymentLink: process.env.SRTIP,
+      priceId: "price_1Qz7UGE14GZrP2iu6b9gVCnt",
     },
     {
       name: "Pro",
@@ -58,7 +59,7 @@ const Pricing = () => {
         { text: "unlimited" },
         { text: "20 competitor analyses" },
       ],
-      paymentLink: process.env.SRTIP,
+      priceId: "price_1QzBHmE14GZrP2iu4VWXIVTs",
       popular: true,
     },
     {
@@ -72,16 +73,73 @@ const Pricing = () => {
         { text: "unlimited" },
         { text: "30 competitor analyses" },
       ],
-      paymentLink: process.env.SRTIP,
+      priceId: "price_1QzBIAE14GZrP2iurG4MAM4e",
     },
   ];
 
   const calculatePrice = (basePrice: number) => {
     if (billingCycle === "annually") {
-      // 10% discount for annual billing
       return (basePrice * 12 * 0.9) / 12;
     }
     return basePrice;
+  };
+
+  const handleGetPlan = async (plan: PricingPlan) => {
+    if (!session?.user) {
+      router.push("/sign-in");
+      return;
+    } else {
+      try {
+        const response = await fetch("/api/stripe/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            priceId: plan.priceId,
+            customerEmail: session.user.email,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          toast.error(errorData.message, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Slide,
+          });
+          return;
+        }
+
+        const data = await response.json();
+
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          toast.error(data.message, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Slide,
+          });
+          return;
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        alert(`Network error: ${error.message}`);
+      }
+    }
   };
 
   return (
@@ -162,28 +220,10 @@ const Pricing = () => {
                     ? "bg-white text-black hover:bg-gray-100"
                     : "bg-black text-white hover:bg-gray-800"
                 }`}
-                onClick={() => {
-                  if (!session?.user) {
-                    // // router.push("/sign-in");
-                    // // เก็บแผนที่เลือกไว้ใน sessionStorage
-                    // sessionStorage.setItem(
-                    //   "selectedPlan",
-                    //   JSON.stringify(plan)
-                    // );
-                    // Redirect ไปหน้า sign-in
-                    router.push("/sign-in?redirectToPayment=true"); // เพิ่ม query redirectToPayment
-                  } else {
-                    if (plan.paymentLink) {
-                      window.location.href = plan.paymentLink;
-                    } else {
-                      alert("Payment link is not available for this plan.");
-                    }
-                  }
-                }}
+                onClick={() => handleGetPlan(plan)}
               >
                 Get Started
               </Button>
-              {/* <Link href={plan.paymentLink}></Link> */}
             </CardContent>
 
             <CardFooter className="flex flex-col items-start w-full space-y-3 pt-6 border-t border-gray-200">
@@ -205,6 +245,7 @@ const Pricing = () => {
           </Card>
         ))}
       </div>
+      <ToastContainer />
     </div>
   );
 };

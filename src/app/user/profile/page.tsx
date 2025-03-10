@@ -1,30 +1,48 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import UserInfo from "../_components/UserInfo";
-import Credits from "../_components/Credits";
-import CreditHistory from "../_components/CreditHistory";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import PersonalInfo from "../_components/user-profile/PersonalInfo";
+import PlanUsage from "../_components/user-profile/PlanUsage";
+import Billing from "../_components/user-profile/Billing";
 
 const UserProfilePage = async () => {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return <div>Please log in to view your profile.</div>;
-  }
-
+  const tabsData = [
+    { value: "personal", label: "Personal Info" },
+    {
+      value: "plan",
+      label: "Plan & Usage",
+    },
+    {
+      value: "billing",
+      label: "Billing & Subscription",
+    },
+  ];
   return (
-    <div className="w-full p-6 md:p-10 jutify-center item-center">
-      <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div className="col-span-1">
-          <UserInfo user={session.user} />
-        </div>
-        <div className="col-span-1">
-          <Credits />
-        </div>
-      </div>
-
-      <div className="mb-8">
-        <CreditHistory />
+    <div className="w-full h-full max-h-screen flex flex-col jutify-center">
+      <h1 className="text-2xl font-semibold text-gray-900 mb-4">
+        User Profile
+      </h1>
+      <div className="w-full items-center flex-grow p-4 md:p-4 bg-white rounded-lg shadow">
+        <Tabs defaultValue="personal" className="relative mr-auto w-full">
+          <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
+            {tabsData.map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="relative rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <TabsContent value="personal">
+            <PersonalInfo />
+          </TabsContent>
+          <TabsContent value="plan">
+            <PlanUsage />
+          </TabsContent>
+          <TabsContent value="billing">
+            <Billing />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

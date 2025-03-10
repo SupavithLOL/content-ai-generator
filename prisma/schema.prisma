@@ -14,22 +14,41 @@ enum Role {
 
 enum SubscriptionStatus {
   ACTIVE
+  INACTIVE
   CANCELED
   EXPIRED
+  INCOMPLETE_EXPIRED // Added: For subscriptions that failed initial payment within grace period
+  INCOMPLETE // Added: For subscriptions requiring an action to complete (e.g., 3DS)
+  PAST_DUE_AND_UNPAID // Added: For subscriptions past due and unpaid for a longer duration
+  UNPAID // Added: For subscriptions that are unpaid
 }
 
 enum PaymentStatus {
   PENDING
+  PROCESSING
   COMPLETED
   FAILED
   REFUNDED // Optional: if you handle refunds
 }
 
 enum CreditTransactionType {
-  EARNED // ได้รับเครดิต (เช่น จากโปรโมชั่น หรือกิจกรรม)
-  SPENT // ใช้เครดิต (เช่น ซื้อสินค้า บริการ)
-  REFUND // คืนเครดิต (เช่น ยกเลิกรายการ)
-  ADJUSTMENT // ปรับยอดเครดิต (เช่น แอดมินปรับแก้ไข)
+  EARNED
+  SPENT
+  REFUND
+  ADJUSTMENT
+}
+
+enum LimitType {
+  PROJECTS
+  KEYWORDS
+  USERS
+  COMPETITOR_ANALYSES
+  CREDIT_LIMIT
+}
+
+enum BillingCycle {
+  MONTHLY
+  ANNUALLY
 }
 
 model User {
@@ -42,47 +61,71 @@ model User {
   verificationTokenExpires DateTime?
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
-  credit                   Int       @default(10)
+  credit                   Int       @default(0)
   role                     Role      @default(USER)
+  stripeCustomerId         String?   @unique
 
-  creditHistory CreditHistory[]
-  subscriptions Subscription[]
-  Payment       Payment[]
+  creditHistory  CreditHistory[]
+  subscriptions  Subscription[]
+  Payment        Payment[]
+  BillingHistory BillingHistory[]
 }
 
 model Plan {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String?
-  price       Float
-  creditLimit Int?
-  createdAt   DateTime @default(now())
+  id            String       @id @default(cuid())
+  name          String       @unique
+  description   String?
+  price         Float
+  billingCycle  BillingCycle @default(MONTHLY)
+  createdAt     DateTime     @default(now())
+  stripePriceId String?
 
-  subscriptions Subscription[]
+  planFeatures   PlanFeature[]
+  subscriptions  Subscription[]
+  BillingHistory BillingHistory[]
+}
+
+model PlanFeature {
+  id          String    @id @default(cuid())
+  plan        Plan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId      String
+  limitType   LimitType // "projects", "keywords", "users", "competitor_analyses"
+  limitValue  String // ค่าตัวเลขหรือ "unlimited"
+  description String?
+
+  @@unique([planId, limitType])
 }
 
 model Subscription {
-  id        String             @id @default(cuid())
-  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  plan      Plan               @relation(fields: [planId], references: [id])
-  status    SubscriptionStatus @default(ACTIVE) // active, canceled, expired
-  startDate DateTime           @default(now())
-  endDate   DateTime?
-  planId    String
-  Payment   Payment[]
+  id                   String             @id @default(cuid())
+  stripeSubscriptionId String             @unique
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String
+  plan                 Plan               @relation(fields: [planId], references: [id])
+  status               SubscriptionStatus @default(INCOMPLETE)
+  startDate            DateTime           @default(now())
+  endDate              DateTime?
+  planId               String
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean?
+  canceledAt           DateTime?
+
+  Payment        Payment[]
+  BillingHistory BillingHistory[]
 }
 
 model Payment {
-  id        String        @id @default(cuid())
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  amount    Float
-  currency  String        @default("USD")
-  status    PaymentStatus @default(COMPLETED) // pending, completed, failed
-  createdAt DateTime      @default(now())
-  method    String
-  provider  String
+  id                      String        @id @default(cuid())
+  user                    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                  String
+  amount                  Float
+  currency                String        @default("USD")
+  status                  PaymentStatus @default(COMPLETED)
+  createdAt               DateTime      @default(now())
+  method                  String
+  provider                String
+  stripeCheckoutSessionId String?       @unique
 
   subscriptionId String?
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
@@ -113,4 +156,31 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+model WebhookEvent {
+  id        String   @id @default(cuid())
+  eventId   String   @unique
+  createdAt DateTime @default(now())
+}
+
+model BillingHistory {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId         String
+  plan           Plan          @relation(fields: [planId], references: [id])
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  planName      String
+  purchaseDate  DateTime
+  endDate       DateTime?
+  amount        Float
+  paymentMethod String
+  billingCycle  BillingCycle
+  status        SubscriptionStatus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

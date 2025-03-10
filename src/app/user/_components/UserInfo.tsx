@@ -2,23 +2,33 @@
 
 import { FaLock } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
+import Link from "next/link";
+import { useSubscriptionStatus } from "@/hooks/use-subscription";
 
 interface UserInfoProps {
   user: {
     id: string;
     username: string;
     email: string;
-    subscription: {
-      planId: string;
-      planName: string;
-      status: string;
-      startDate: string;
-      endDate: string;
-    };
   };
 }
 
 const UserInfo = ({ user }: UserInfoProps) => {
+  const {
+    subscription,
+    isLoading: isSubscriptionLoading,
+    error: subscriptionError,
+    // mutateSubscription,
+  } = useSubscriptionStatus();
+
+  if (isSubscriptionLoading) {
+    return <p>Loading profile and subscription...</p>;
+  }
+
+  if (subscriptionError) {
+    return <p>Error loading subscription: {subscriptionError.message}</p>;
+  }
+
   return (
     <div className="w-full p-6 bg-white rounded-lg shadow">
       <div className="mb-6">
@@ -39,10 +49,18 @@ const UserInfo = ({ user }: UserInfoProps) => {
       </div>
       <div className="mb-4">
         <p className="font-semibold text-gray-700">Subscription</p>
-        {user.subscription?.planName ? (
-          <p className="text-gray-900">{user.subscription?.planName}</p>
+        {subscription ? (
+          <div>
+            <p className="text-gray-900">Plan: {subscription?.plan.name}</p>
+            <p>Status: {subscription.status}</p>
+          </div>
         ) : (
-          <p className="text-gray-900">No Subscription</p>
+          <p className="text-gray-900">
+            No Subscription{" "}
+            <Link className="text-red-500" href="/pricing">
+              Click here
+            </Link>
+          </p>
         )}
       </div>
       <div className="mt-6 flex space-x-2">

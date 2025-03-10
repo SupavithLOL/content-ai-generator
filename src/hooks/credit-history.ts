@@ -8,11 +8,16 @@ const fetcher = async (url: string) => {
 };
 
 export const useCreditHistory = () => {
-  const { data, isLoading } = useSWR("/api/credit/credit-history", fetcher);
+  const { data, error, isLoading } = useSWR("/api/credit/credit-history", fetcher,{
+    revalidateOnFocus: true,
+    revalidateIfStale: false,
+    revalidateInterval: 30000, 
+  });
 
   return {
     history: data?.history || [],
     isLoading: isLoading,
+    error,
     refreshHistory: () => mutate("/api/credit/credit-history"),
   };
 };
