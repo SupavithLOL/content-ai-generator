@@ -2,7 +2,7 @@ import {NextAuthOptions} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { generateVerificationToken } from "./token";
-import { getUserByEmail, getUserById } from "@/data/user";
+import { getUserByEmail } from "@/data/user";
 import { sendVerificationEmail } from "./mail";
 
 export const authOptions: NextAuthOptions ={
@@ -47,8 +47,6 @@ export const authOptions: NextAuthOptions ={
                 return null;
             }
 
-            await new Promise(resolve => setTimeout(resolve, 100));
-
             return {
                 id: `${existingUser.id}`,
                 username: existingUser.username,
@@ -60,9 +58,7 @@ export const authOptions: NextAuthOptions ={
         })
     ],
     callbacks: {
-      async signIn({user}) {
-        const existingUser = await getUserById(user.id);
-        if(!existingUser?.emailVerified) return false;
+      async signIn() {
         return true;
       },
       async jwt({ token, user }) {
