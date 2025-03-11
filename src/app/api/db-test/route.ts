@@ -1,11 +1,12 @@
-// pages/api/db-test.ts
-import { NextApiRequest, NextApiResponse } from 'next';
-import { db } from '@/lib/db'; // **สำคัญ:** แก้ path ให้ถูกต้องตามตำแหน่งไฟล์ `db.ts` ของคุณ
+// src/app/api/db-test/route.ts  (แก้ไขแล้ว - App Router)
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log("API Route: /api/db-test - Request Headers:", req.headers);
+export async function GET(req: Request) { // เปลี่ยนเป็น export async function GET(req: Request)
+    console.log(`API Route: /api/db-test - Request Method: ${req.method}`);
+
   try {
-    console.log("API Route: /api/db-test - Starting database connection test..."); // Log จุดเริ่มต้น
+    console.log("API Route: /api/db-test - Starting database connection test...");
 
     console.log("Attempting database connection using db.$connect()...");
     await db.$connect();
@@ -16,18 +17,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`Successfully fetched user count: ${userCount}`);
     await db.$disconnect();
 
-    console.log("API Route: /api/db-test - Database test completed successfully."); // Log จุดสำเร็จ
+    console.log("API Route: /api/db-test - Database test completed successfully.");
 
-    res.status(200).json({ success: true, message: 'Database connection and query successful!', userCount });
+    return NextResponse.json({ success: true, message: 'Database connection and query successful!', userCount });
 
-  } catch (error: unknown) { // ใช้ 'any' type สำหรับ error เพื่อความยืดหยุ่น
-    console.error("API Route: /api/db-test - Database connection or query error occurred!"); // Log จุด Error
-    console.error("Error Object:", error); // Log Error Object ทั้งหมด
-    console.error("Error Message:", (error as Error).message); // Log Error Message
-    console.error("Error Stack Trace:", (error as Error).stack); // Log Stack Trace
+  } catch (error: unknown) {
+    console.error("API Route: /api/db-test - Database connection or query error occurred!");
+    console.error("Error Object:", error);
+    console.error("Error Message:", (error as Error).message);
+    console.error("Error Stack Trace:", (error as Error).stack);
 
-    await db.$disconnect(); // Ensure disconnect even on error
+    await db.$disconnect();
 
-    res.status(500).json({ success: false, message: 'Database connection or query failed!', error: (error as Error).message, fullError: error });
+    return NextResponse.json({ success: false, message: 'Database connection or query failed!', error: (error as Error).message, fullError: error });
   }
 }
