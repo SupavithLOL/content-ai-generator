@@ -21,15 +21,9 @@ export async function GET() {
         },
       },
     });
-    let plan = null;
+    const plan = user?.subscriptions[0].plan || null;
 
-    if (user?.subscriptions && user.subscriptions.length > 0) {
-      plan = user.subscriptions[0].plan;
-    } else {
-      plan = null;
-    }
-
-    return NextResponse.json({ plan: plan }, { status: 200 });
+    return NextResponse.json({ plan }, { status: 200 });
   } catch (error) {
     console.error("[API:plan-feature] - Error fetching plans:", error);
     return new NextResponse("Error fetching plans", { status: 500 });

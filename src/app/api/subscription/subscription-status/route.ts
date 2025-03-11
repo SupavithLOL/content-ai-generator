@@ -11,18 +11,21 @@ export async function GET() {
   }
 
   try {
-    const getUserSubscription = await db.subscription.findFirst({
-      where: {
-        userId: session.user.id as string,
+    const userId = session.user.id;
+
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      include: {
+        subscriptions: {
+          where: { status: "ACTIVE" },
+        },
       },
     });
     
-    if (!getUserSubscription) {
-      return NextResponse.json({ subscription: null }, { status: 200 });
-    }
+    const subscription = user?.subscriptions || null;
 
 
-    return NextResponse.json({ subscription: getUserSubscription }, { status: 200 });
+    return NextResponse.json({ subscription }, { status: 200 });
 
   } catch (error) {
     console.error("[API:subscription-status] - Error fetching subscription:", error);
