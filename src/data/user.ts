@@ -6,7 +6,8 @@ export const getUserByEmail = async (email: string) => {
             where: { email }
         });
         return user;
-    } catch {
+    } catch (error) {
+        console.error("getUserByEmail - Error fetching user by email:", email, error);
         return null;
     }
 }
@@ -17,7 +18,8 @@ export const getUserById = async (id: string) => {
             where: { id }
         });
         return user;
-    } catch {
+    } catch (error) {
+        console.error("getUserById - Error fetching user by ID:", id, error);
         return null;
     }
 }

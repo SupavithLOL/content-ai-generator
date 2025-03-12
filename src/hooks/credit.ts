@@ -14,9 +14,9 @@ const fetcher = async (url: string) => {
 
 export const useCredit = () => {
   const { data, error, isLoading } = useSWR("/api/credit", fetcher,{
-    revalidateOnFocus: false,
+      revalidateOnFocus: false,
       revalidateIfStale: true,
-      refreshInterval: 60000,
+      refreshInterval: 300000,
   });
 
   return {
