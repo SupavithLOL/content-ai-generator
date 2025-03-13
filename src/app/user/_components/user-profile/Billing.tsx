@@ -3,9 +3,12 @@ import { getUserPlan } from "@/lib/server/plan";
 import { getBillHistory } from "@/lib/server/bill-history";
 
 const Billing = async ({ userId }: { userId: string }) => {
-  const userSubscription = await getUserSubscription(userId);
-  const userPlan = await getUserPlan(userId);
-  const userBillHistory = await getBillHistory(userId);
+  const [userPlan, userSubscription, userBillHistory] = await Promise.all([
+    getUserPlan(userId),
+
+    getUserSubscription(userId),
+    getBillHistory(userId),
+  ]);
 
   const formatDate = (dateString: Date | string | undefined) => {
     if (!dateString) {

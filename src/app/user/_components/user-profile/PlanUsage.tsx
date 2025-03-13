@@ -11,11 +11,6 @@ interface CreditHistoryItem {
 }
 
 const PlanUsage = async ({ userId }: { userId: string }) => {
-  // const userCredit = await getUserCredit(userId);
-  // const userCreditHistory = await getCreditHistory(userId);
-  // const userPlan = await getUserPlan(userId);
-  // const userPlanFeature = await getPlanFeatures(userId);
-  // const userSubscription = await getUserSubscription(userId);
   const [
     userCredit,
     userCreditHistory,
