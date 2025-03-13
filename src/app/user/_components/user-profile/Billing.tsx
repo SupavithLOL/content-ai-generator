@@ -1,17 +1,164 @@
-"use client";
+import { getUserSubscription } from "@/lib/server/subscription";
+import { getUserPlan } from "@/lib/server/plan";
+import { getBillHistory } from "@/lib/server/bill-history";
 
-import BillingHistory from "./BillingHistory";
-import SubscriptionDetail from "./SubscriptionDetail";
+const Billing = async ({ userId }: { userId: string }) => {
+  const userSubscription = await getUserSubscription(userId);
+  const userPlan = await getUserPlan(userId);
+  const userBillHistory = await getBillHistory(userId);
 
-const Billing = () => {
+  const formatDate = (dateString: Date | string | undefined) => {
+    if (!dateString) {
+      return "N/A";
+    }
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return "N/A";
+    }
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className="w-full p-4 bg-white rounded-lg flex flex-col">
       <div className="w-full">
-        <SubscriptionDetail />
+        <div>
+          <div className="md:grid md:grid-cols-3 md:gap-6 mb-4 text-sm">
+            <div>
+              <h3 className="font-semibold mb-2 text-left">Plan Details</h3>
+              <p className="text-sm text-gray-500 text-left">
+                {userPlan?.name} ({userPlan?.billingCycle})
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2 text-left">Payment method</h3>
+              <div className="flex items-center">
+                <p className="text-gray-500 text-left">
+                  Card
+                  <span className="text-indigo-600 ml-1 cursor-pointer">
+                    change
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div>
+              {/* Div ว่างนี้ใช้เพื่อให้โครงสร้าง grid 3 คอลัมน์สมบูรณ์และจัดวางข้อมูลแถว 1 และ 2 ให้ตรงกัน */}
+            </div>
+          </div>
+
+          <div className="md:grid md:grid-cols-3 md:gap-6">
+            <div>
+              <h3 className="font-semibold mb-1 text-left">Start Date</h3>
+              <p className="text-gray-500 text-left">
+                {formatDate(userSubscription?.startDate)}
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-1 text-left">
+                Next Billing Date
+              </h3>
+              <p className="text-gray-500 text-left">endPeriod</p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-1 text-left">
+                Next Billing Amount
+              </h3>
+              <p className="text-gray-500 text-left">$200</p>
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-start space-x-4">
+            <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              upgrade Subcription
+            </button>
+            <button className="text-red-500 hover:text-red-600 text-sm font-semibold focus:outline-none">
+              Cancel subcription
+            </button>
+          </div>
+        </div>
       </div>
       <div className="w-full border border-gray-200 mb-6 mt-6"></div>
       <div className="w-full">
-        <BillingHistory />
+        <div className="overflow-x-auto w-full">
+          <div className="mb-4">
+            <h1 className="font-semibold">Billing History</h1>
+          </div>
+          <table className="min-w-full divide-y divide-gray-200 rounded-lg shadow overflow-hidden">
+            <thead className="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Plan Name
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Purchase Date
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  End Date
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Amount
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Payment Method
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {userBillHistory?.map((item) => (
+                <tr key={item.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {item.planName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {formatDate(item.purchaseDate)}{" "}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.endDate ? formatDate(item.endDate) : "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ${item.amount.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.paymentMethod}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <a
+                      href="#"
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      Download
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

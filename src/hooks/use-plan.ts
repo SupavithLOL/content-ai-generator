@@ -7,10 +7,15 @@ const fetcher = async (url: string) => {
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
     },
+    credentials: "include"
   });
-  if (!res.ok) throw new Error("Failed to fetch plan");
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Failed to fetch plan: ${errorText}`);
+  }
   return res.json();
 };
+
 interface Plan {
   id: string;
   name: string;
@@ -27,6 +32,7 @@ export const usePlan = () => {
     '/api/subscription/plan',
     fetcher,
     {
+      fallbackData: { plan: null },
       revalidateOnFocus: false,  // ไม่โหลดใหม่ทุกครั้งที่สลับแท็บ
       revalidateIfStale: true,   // โหลดใหม่เมื่อข้อมูลเก่า
       refreshInterval: 60000,

@@ -2,8 +2,13 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import PersonalInfo from "../_components/user-profile/PersonalInfo";
 import PlanUsage from "../_components/user-profile/PlanUsage";
 import Billing from "../_components/user-profile/Billing";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 const UserProfilePage = async () => {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id ?? "";
+
   const tabsData = [
     { value: "personal", label: "Personal Info" },
     {
@@ -37,10 +42,10 @@ const UserProfilePage = async () => {
             <PersonalInfo />
           </TabsContent>
           <TabsContent value="plan">
-            <PlanUsage />
+            <PlanUsage userId={userId} />
           </TabsContent>
           <TabsContent value="billing">
-            <Billing />
+            <Billing userId={userId} />
           </TabsContent>
         </Tabs>
       </div>
