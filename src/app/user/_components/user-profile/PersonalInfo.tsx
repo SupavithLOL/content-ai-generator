@@ -5,8 +5,6 @@ interface PersonalInfoProps {
 }
 
 const PersonalInfo: React.FC<PersonalInfoProps> = ({ session }) => {
-  // const { data: session } = useSession();
-
   const formatDate = (dateString: Date | string | undefined) => {
     if (!dateString) {
       return "N/A";
