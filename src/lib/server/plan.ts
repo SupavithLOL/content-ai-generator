@@ -1,8 +1,10 @@
 "use server"
 
 import { db } from "../db";
+import { cache } from 'react'
 
-export async function getUserPlan(userId: string) {
+export const getUserPlan = cache(async (userId: string) => {
+// export async function getUserPlan(userId: string) {
     const subscription = await db.subscription.findFirst({
       where: { userId },
       include: {
@@ -19,10 +21,10 @@ export async function getUserPlan(userId: string) {
     const plan = subscription?.plan || null;
 
     return plan;
-  }
+  });
 
-  
-  export async function getPlanFeatures(userId: string) {
+    export const getPlanFeatures = cache(async (userId: string) => {
+//   export async function getPlanFeatures(userId: string) {
     const subscription = await db.subscription.findFirst({
         where: {
           userId: userId,
@@ -43,4 +45,4 @@ export async function getUserPlan(userId: string) {
       });
       const planFeture = subscription?.plan.planFeatures || null;
       return planFeture;
-  }
+  });

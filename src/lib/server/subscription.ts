@@ -1,8 +1,10 @@
 "use server"
 
 import { db } from "../db";
+import { cache } from 'react'
 
-export async function getUserSubscription(userId: string) {
+export const getUserSubscription = cache(async (userId: string) => {
+// export async function getUserSubscription(userId: string) {
     return db.subscription.findFirst({
       where: { userId },
       select: {
@@ -13,4 +15,4 @@ export async function getUserSubscription(userId: string) {
         planId: true,
       },
     });
-  }
+  });
