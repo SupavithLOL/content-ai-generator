@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { db, SubscriptionStatus } from "@/lib/db"; // Import SubscriptionStatus enum from db
+import { db } from "@/lib/db"; // Import SubscriptionStatus enum from db
+import { SubscriptionStatus } from "@prisma/client";
 import { headers } from "next/headers";
 import Stripe from 'stripe'; // Import Stripe type
 
