@@ -39,7 +39,7 @@ const UserProfilePage = async () => {
             ))}
           </TabsList>
           <TabsContent value="personal">
-            <PersonalInfo />
+            <PersonalInfo session={session} />
           </TabsContent>
           <TabsContent value="plan">
             <PlanUsage userId={userId} />

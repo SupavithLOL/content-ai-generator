@@ -1,9 +1,11 @@
-"use client";
+import { Session } from "next-auth";
 
-import { useSession } from "next-auth/react";
+interface PersonalInfoProps {
+  session: Session | null;
+}
 
-const PersonalInfo = ({}) => {
-  const { data: session } = useSession();
+const PersonalInfo: React.FC<PersonalInfoProps> = ({ session }) => {
+  // const { data: session } = useSession();
 
   const formatDate = (dateString: Date | string | undefined) => {
     if (!dateString) {
