@@ -4,18 +4,10 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSubscription } from "@/hooks/use-subscription";
-import { usePlan } from "@/hooks/use-plan";
-import { usePlanFeatures } from "@/hooks/use-feature";
-import { useBillingHistory } from "@/hooks/use-billing";
 
 const SuccessPage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { mutateSubscription } = useSubscription();
-  const { mutatePlan } = usePlan();
-  const { mutatePlanFeature } = usePlanFeatures();
-  const { mutateBillingHistory } = useBillingHistory();
 
   useEffect(() => {
     if (status === "loading") {
@@ -24,18 +16,7 @@ const SuccessPage = () => {
     if (status === "unauthenticated") {
       router.push("/auth/sign-in"); // Use router.push from next/navigation
     }
-    mutateSubscription();
-    mutatePlan(); // Trigger manual revalidation
-    mutatePlanFeature();
-    mutateBillingHistory();
-  }, [
-    status,
-    router,
-    mutateSubscription,
-    mutatePlan,
-    mutatePlanFeature,
-    mutateBillingHistory,
-  ]);
+  }, [status, router]);
 
   if (status !== "authenticated") {
     return null; // Or loading state
