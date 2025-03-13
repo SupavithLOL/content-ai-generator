@@ -11,11 +11,24 @@ interface CreditHistoryItem {
 }
 
 const PlanUsage = async ({ userId }: { userId: string }) => {
-  const userCredit = await getUserCredit(userId);
-  const userCreditHistory = await getCreditHistory(userId);
-  const userPlan = await getUserPlan(userId);
-  const userPlanFeature = await getPlanFeatures(userId);
-  const userSubscription = await getUserSubscription(userId);
+  // const userCredit = await getUserCredit(userId);
+  // const userCreditHistory = await getCreditHistory(userId);
+  // const userPlan = await getUserPlan(userId);
+  // const userPlanFeature = await getPlanFeatures(userId);
+  // const userSubscription = await getUserSubscription(userId);
+  const [
+    userCredit,
+    userCreditHistory,
+    userPlan,
+    userPlanFeature,
+    userSubscription,
+  ] = await Promise.all([
+    getUserCredit(userId),
+    getCreditHistory(userId),
+    getUserPlan(userId),
+    getPlanFeatures(userId),
+    getUserSubscription(userId),
+  ]);
 
   const creditLimitFeature = userPlanFeature?.find(
     (feature) => feature.limitType === LimitType.CREDIT_LIMIT
