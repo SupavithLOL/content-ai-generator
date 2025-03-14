@@ -6,7 +6,7 @@ export const sendPasswordResetEmail = async (
     email: string,
     token: string,
 ) => {
-    const resetLink = `http://localhost:3000/new-password?token=${token}`
+    const resetLink = `${process.env.NEXT_PUBLIC_SITE_URL}/new-password?token=${token}`
 
     await resend.emails.send({
         from: "onboarding@resend.dev",
@@ -19,7 +19,7 @@ export const sendPasswordResetEmail = async (
 export const sendVerificationEmail = async (email: string, token: string) => {
     //เปลี่ยน path เมื่อ deploy เพื่อที่จะส่งเมลไปยัง mail อื่นๆได้
     //ไม่สามารถส่งไปยัง email อื่นนอกเหนือจาก email ที่ลงทะเบียนใน resend ได้
-    const confirmLink = `http://localhost:3000/new-verification?token=${token}`;
+    const confirmLink = `${process.env.NEXT_PUBLIC_SITE_URL}/new-verification?token=${token}`;
     await resend.emails.send({
         from: "onboarding@resend.dev", //mail ฟรีของ Resend ที่จะใช้ได้ฟรี
         to: email,
