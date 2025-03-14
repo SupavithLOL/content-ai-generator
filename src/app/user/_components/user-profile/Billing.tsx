@@ -1,16 +1,18 @@
 import { getUserSubscription } from "@/lib/server/subscription";
 import { getUserPlan } from "@/lib/server/plan";
 import { getBillHistory } from "@/lib/server/bill-history";
+import { getUserLatestPayment } from "@/lib/server/payment";
 
 const Billing = async ({ userId }: { userId: string }) => {
-  const [userPlan, userSubscription, userBillHistory] = await Promise.all([
-    getUserPlan(userId),
+  const [userPlan, userSubscription, userBillHistory, userLatestPayment] =
+    await Promise.all([
+      getUserPlan(userId),
+      getUserSubscription(userId),
+      getBillHistory(userId),
+      getUserLatestPayment(userId),
+    ]);
 
-    getUserSubscription(userId),
-    getBillHistory(userId),
-  ]);
-
-  const formatDate = (dateString: Date | string | undefined) => {
+  const formatDate = (dateString: Date | string | undefined | null) => {
     if (!dateString) {
       return "N/A";
     }
@@ -41,10 +43,10 @@ const Billing = async ({ userId }: { userId: string }) => {
               <h3 className="font-semibold mb-2 text-left">Payment method</h3>
               <div className="flex items-center">
                 <p className="text-gray-500 text-left">
-                  Card
-                  <span className="text-indigo-600 ml-1 cursor-pointer">
+                  {userLatestPayment?.method}
+                  {/* <span className="text-indigo-600 ml-1 cursor-pointer">
                     change
-                  </span>
+                  </span> */}
                 </p>
               </div>
             </div>
@@ -64,13 +66,18 @@ const Billing = async ({ userId }: { userId: string }) => {
               <h3 className="font-semibold mb-1 text-left">
                 Next Billing Date
               </h3>
-              <p className="text-gray-500 text-left">endPeriod</p>
+              <p className="text-gray-500 text-left">
+                {formatDate(userSubscription?.endDate)}
+              </p>
             </div>
             <div>
               <h3 className="font-semibold mb-1 text-left">
                 Next Billing Amount
               </h3>
-              <p className="text-gray-500 text-left">$200</p>
+              <p className="text-gray-500 text-left">
+                {userLatestPayment?.currency}
+                {userLatestPayment?.amount}
+              </p>
             </div>
           </div>
 

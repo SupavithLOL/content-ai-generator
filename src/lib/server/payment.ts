@@ -18,4 +18,16 @@ export async function getUserPayment(userId: string) {
             stripeCheckoutSessionId: true,
           },
         });
-}
+};
+
+export async function getUserLatestPayment(userId: string) {
+  return await db.payment.findFirst({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        select: {
+          amount: true,
+          currency: true, 
+          method: true,
+        },
+      });
+};
