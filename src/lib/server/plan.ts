@@ -1,12 +1,12 @@
 "use server"
 
 import { db } from "../db";
+import { SubscriptionStatus } from "@prisma/client";
 import { cache } from 'react'
 
 export const getUserPlan = cache(async (userId: string) => {
-// export async function getUserPlan(userId: string) {
     const subscription = await db.subscription.findFirst({
-      where: { userId },
+      where: { userId, status: SubscriptionStatus.ACTIVE },
       include: {
         plan: { 
             select: {
@@ -24,10 +24,10 @@ export const getUserPlan = cache(async (userId: string) => {
   });
 
     export const getPlanFeatures = cache(async (userId: string) => {
-//   export async function getPlanFeatures(userId: string) {
     const subscription = await db.subscription.findFirst({
         where: {
-          userId: userId,
+          userId,
+          status: SubscriptionStatus.ACTIVE
         },
         include: {
           plan: {

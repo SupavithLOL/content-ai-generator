@@ -1,12 +1,12 @@
 "use server"
 
 import { db } from "../db";
+import { SubscriptionStatus } from "@prisma/client";
 import { cache } from 'react'
 
 export const getUserSubscription = cache(async (userId: string) => {
-// export async function getUserSubscription(userId: string) {
     return db.subscription.findFirst({
-      where: { userId },
+      where: { userId, status: SubscriptionStatus.ACTIVE },
       select: {
         id: true,
         status: true,
