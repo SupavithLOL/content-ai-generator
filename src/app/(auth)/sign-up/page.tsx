@@ -1,22 +1,17 @@
-"use client";
-
 import SignUpForm from "@/components/auth/SignUpForm";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-const SignUpPage = () => {
-  const { data: session } = useSession();
-  const router = useRouter();
+const SignUpPage = async () => {
+  const session = await getServerSession(authOptions);
 
-  useEffect(() => {
-    if (session) {
-      router.push("/user");
-    }
-  }, [session, router]);
+  if (session) {
+    redirect("/user");
+  }
 
   return (
-    <div className="w-full">
+    <div className="w-full flex justify-center items-center min-h-screen bg-gray-100">
       <SignUpForm />
     </div>
   );
