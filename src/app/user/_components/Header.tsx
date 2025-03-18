@@ -1,3 +1,5 @@
+"use client";
+
 import { CircleUser, Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";

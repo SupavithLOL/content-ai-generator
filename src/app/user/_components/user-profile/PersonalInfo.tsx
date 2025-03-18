@@ -1,4 +1,5 @@
 import { Session } from "next-auth";
+import ChangPasswordButton from "./ChangPasswordButton";
 
 interface PersonalInfoProps {
   session: Session | null;
@@ -30,6 +31,9 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ session }) => {
       <div className="mb-2">
         <p>Sign-up date:</p>
         <p>{formatDate(session?.user.createdAt)}</p>
+      </div>
+      <div>
+        <ChangPasswordButton userId={session?.user?.id ?? ""} />
       </div>
     </div>
   );

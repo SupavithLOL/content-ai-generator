@@ -1,6 +1,6 @@
 import { getUserByEmail } from "@/data/user";
 import * as z from "zod";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { sendPasswordResetEmail } from "@/lib/mail";
 import { generatePasswordResetToken } from "@/lib/token";
 
@@ -9,7 +9,7 @@ const ResetSchema = z.object({
 });
 
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { email } = ResetSchema.parse(body);

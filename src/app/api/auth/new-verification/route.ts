@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getVerificationTokenByToken } from "@/data/verification-token";
 import { getUserByEmail } from "@/data/user";
 
@@ -35,7 +35,7 @@ const newVerification = async (token: string) => {
     return { success: "Email verified successfully" };
 };
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { token } = body;

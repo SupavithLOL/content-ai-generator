@@ -2,6 +2,7 @@ import { getUserSubscription } from "@/lib/server/subscription";
 import { getUserPlan } from "@/lib/server/plan";
 import { getBillHistory } from "@/lib/server/bill-history";
 import { getUserLatestPayment } from "@/lib/server/payment";
+import CancelSubButton from "./CancelSubButton";
 
 const Billing = async ({ userId }: { userId: string }) => {
   const [userPlan, userSubscription, userBillHistory, userLatestPayment] =
@@ -36,7 +37,7 @@ const Billing = async ({ userId }: { userId: string }) => {
             <div>
               <h3 className="font-semibold mb-2 text-left">Plan Details</h3>
               <p className="text-sm text-gray-500 text-left">
-                {userPlan?.name} ({userPlan?.billingCycle})
+                {userPlan?.name || "N/A"} ({userPlan?.billingCycle || "N/A"})
               </p>
             </div>
             <div>
@@ -85,9 +86,7 @@ const Billing = async ({ userId }: { userId: string }) => {
             <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
               upgrade Subcription
             </button>
-            <button className="text-red-500 hover:text-red-600 text-sm font-semibold focus:outline-none">
-              Cancel subcription
-            </button>
+            <CancelSubButton userId={userId} />
           </div>
         </div>
       </div>
@@ -134,6 +133,12 @@ const Billing = async ({ userId }: { userId: string }) => {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  Status
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Action
                 </th>
               </tr>
@@ -153,8 +158,12 @@ const Billing = async ({ userId }: { userId: string }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     ${item.amount.toFixed(2)}
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {item.paymentMethod}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.status}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <a

@@ -2,6 +2,7 @@ import { getCreditHistory, getUserCredit } from "@/lib/server/credit";
 import { getPlanFeatures, getUserPlan } from "@/lib/server/plan";
 import { getUserSubscription } from "@/lib/server/subscription";
 import { LimitType } from "@prisma/client";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"; // Import icon
 
 interface CreditHistoryItem {
   id: string;
@@ -48,53 +49,77 @@ const PlanUsage = async ({ userId }: { userId: string }) => {
   };
 
   return (
-    <div className="w-full p-4 bg-white rounded-lg">
-      <div className="grid md:grid-cols-2 grid-cols-1">
-        <div className="flex flex-col mb-4">
-          <div className="mb-4">
-            <p>Current Plan</p>
-            <p>
-              {userPlan?.name}({userPlan?.billingCycle})
+    <div className="w-full p-6 bg-white rounded-xl">
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-6">
+        <div className="flex flex-col space-y-4">
+          <div className="mb-2">
+            <p className="text-lg font-semibold text-gray-800">Current Plan</p>
+            <p className="text-gray-600">
+              {userPlan?.name || "N/A"} ({userPlan?.billingCycle || "N/A"})
             </p>
           </div>
-          <div className="mb-4">
-            <p>Projects</p>
-            <p>{userProjectLimit} in your plan</p>
+          <div className="mb-2">
+            <p className="text-lg font-semibold text-gray-800">Projects</p>
+            <p className="text-gray-600">
+              {userProjectLimit || "N/A"} in your plan
+            </p>
           </div>
-          <div className="mb-4">
-            <p>Credits</p>
-            <p>
-              {userCredit?.credit}/{userCrediLimit}
+          <div className="mb-2">
+            <p className="text-lg font-semibold text-gray-800">Credits</p>
+            <p className="text-gray-600">
+              {userCredit?.credit || 0}/{userCrediLimit || "N/A"}
             </p>
           </div>
           <div>
-            <p>Expire Subscription Date</p>
-            <p>{formatDate(userSubscription?.endDate)}</p>
+            <p className="text-lg font-semibold text-gray-800">Subscription</p>
+            {userSubscription ? (
+              <p className="text-gray-600">
+                Expires: {formatDate(userSubscription?.endDate)}
+              </p>
+            ) : (
+              <p className="text-gray-600 italic text-gray-500">
+                No active subscription
+              </p>
+            )}
           </div>
         </div>
         <div>
-          {/* <CreditHistory /> */}
-          <div className="w-full p-4 rounded-lg shadow">
+          <div className="bg-gray-50 p-4 rounded-lg shadow-inner border border-gray-100">
             <div className="flex justify-between items-center mb-4">
-              <h3>Recent credit usage</h3>
-              <h3>Search</h3>
-            </div>
+              <h3 className="text-lg font-semibold text-gray-800">
+                Recent Credit Usage
+              </h3>
 
-            <div className="overflow-y-auto">
-              <ul>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <MagnifyingGlassIcon
+                    className="h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+              </div>
+            </div>
+            <div className="overflow-y-auto max-h-96">
+              <ul className="divide-y divide-gray-200">
                 {userCreditHistory.length > 0 ? (
                   userCreditHistory.map((item: CreditHistoryItem) => (
-                    <li key={item.id} className="border-b border-gray-200 pb-4">
-                      <div className="flex justify-between items-start">
+                    <li key={item.id} className="py-4">
+                      <div className="flex justify-between items-center">
                         <div>
-                          <p className="font-semibold">{item.type}</p>
+                          <p className="font-medium text-gray-700">
+                            {item.type}
+                          </p>
                         </div>
-                        <div>
-                          <p className="text-sm text-gray-500">
+                        <div className="text-right">
+                          <p className="text-sm text-gray-500 mb-1">
                             {new Date(item.createdAt).toLocaleDateString(
                               "en-US",
                               {
-                                year: "numeric",
                                 month: "short",
                                 day: "numeric",
                                 hour: "2-digit",
@@ -103,8 +128,6 @@ const PlanUsage = async ({ userId }: { userId: string }) => {
                               }
                             )}
                           </p>
-                        </div>
-                        <div className="text-right">
                           {item.amount < 0 ? (
                             <p className="text-red-500 font-semibold">
                               {item.amount}
@@ -119,7 +142,9 @@ const PlanUsage = async ({ userId }: { userId: string }) => {
                     </li>
                   ))
                 ) : (
-                  <p className="text-gray-500">ยังไม่มีประวัติการใช้เครดิต.</p>
+                  <li className="py-4 text-center text-gray-500 italic">
+                    No credit history available.
+                  </li>
                 )}
               </ul>
             </div>

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { hash } from 'bcrypt';
 import * as z from 'zod';
 import { generateVerificationToken } from "@/lib/token";
@@ -16,7 +16,7 @@ const userSchema = z
       .min(8, "Password must have more than 8 characters"),
   });
   
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { email, username, password } = userSchema.parse(body)

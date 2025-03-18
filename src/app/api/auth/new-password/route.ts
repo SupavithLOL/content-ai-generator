@@ -1,6 +1,6 @@
 import * as z from "zod";
 import bcrypt from "bcrypt";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getPasswordResetTokenByToken } from "@/data/password-reset-token";
 import { getUserByEmail } from "@/data/user";
 import { db } from "@/lib/db";
@@ -12,7 +12,7 @@ const NewPasswordSchema = z.object({
     .min(8, "Password must have than 8 characters"),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
             const body = await req.json();
             const validatedBody = NewPasswordSchema.parse(body);

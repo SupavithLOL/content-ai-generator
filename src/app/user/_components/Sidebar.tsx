@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Home,
@@ -8,14 +10,14 @@ import {
   Users,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
 
 interface SidebarProps {
   isMobile?: boolean;
@@ -56,7 +58,7 @@ const UserSidebar: React.FC<SidebarProps> = ({ isMobile = false }) => {
         </nav>
       </div>
       <div className="mt-auto p-4">
-        <Card>
+        {/* <Card>
           <CardHeader className="p-2 pt-0 md:p-4">
             <CardTitle>Upgrade to Pro</CardTitle>
             <CardDescription>
@@ -68,7 +70,7 @@ const UserSidebar: React.FC<SidebarProps> = ({ isMobile = false }) => {
               Upgrade
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );
