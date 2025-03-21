@@ -8,7 +8,7 @@ export const getStripeCustomerById = async(userId: string) => {
     where: { id: userId },
     select: {stripeCustomerId: true}
   })
-};
+};  
 
 export const getUserSubscription = async (userId: string) => {
     return db.subscription.findFirst({

@@ -57,11 +57,10 @@ const CancelSubButton = ({ userId }: { userId: string }) => {
         transition: Slide,
       });
       setIsCanceling(false);
-      window.location.reload(); // Refresh หน้าเว็บเพื่อให้ Billing component ดึงข้อมูลใหม่
+      window.location.reload();
     } catch (error) {
       console.error("Error during subscription cancellation:", error);
       setIsCanceling(false);
-      // Handle network error or other exceptions
     }
   };
 
